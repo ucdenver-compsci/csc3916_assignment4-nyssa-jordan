@@ -115,6 +115,7 @@ router.route('/movies')
     let includeReview = req.query.reviews;
     console.log("review", includeReview);
     let reviews;
+    var o = getJSONObjectForMovieRequirement(req);
     if (includeReview) {
         movies = await Movie.aggregate([
             {
@@ -132,29 +133,59 @@ router.route('/movies')
             }
 
         ])
+        o.status = 200;
+        o.message = "GET movies";
+        o.movies = movies;
+        o.headers = req.headers;
+        o.query = req.query;
+        o.key = env.UNIQUE_KEY;
+        res.json(o);
     }
     else {
         
         if (req.body.title){
             movies = await Movie.find({'title' : { '$regex' : req.body.title, '$options' : 'i'}})
+            console.log(movies);
+            if (movies.length > 0) {
+                o.status = 200;
+                o.message = "GET movies";
+                o.movies = movies;
+                o.headers = req.headers;
+                o.query = req.query;
+                o.key = env.UNIQUE_KEY;
+                res.json(o);
+
+            }
+            else {
+                
+                o.status = 401;
+                o.message = "can't find movie title";
+                
+                o.movies = movies;
+                o.headers = req.headers;
+                o.query = req.query;
+                o.key = env.UNIQUE_KEY;
+                res.status(401).json(o);
+            }
     
         }
         else {
             movies = await Movie.find();
+            o.status = 200;
+            o.message = "GET movies";
+            o.movies = movies;
+            o.headers = req.headers;
+            o.query = req.query;
+            o.key = env.UNIQUE_KEY;
+            res.json(o);
     
         }
 
     }
     
-    var o = getJSONObjectForMovieRequirement(req);
     
-    o.status = 200;
-    o.message = "GET movies";
-    o.movies = movies;
-    o.headers = req.headers;
-    o.query = req.query;
-    o.key = env.UNIQUE_KEY;
-    res.json(o);
+    
+
     
 })
 .post(async(req, res) => {
