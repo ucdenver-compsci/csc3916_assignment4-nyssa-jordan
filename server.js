@@ -110,7 +110,7 @@ router.post('/signin', function (req, res) {
 
 
 router.route('/movies')
-.get(async(req, res) => {
+.get(authJwtController.isAuthenticated, async(req, res) => {
     let movies;
     let includeReview = req.query.reviews;
     console.log("review", includeReview);
@@ -188,7 +188,7 @@ router.route('/movies')
 
     
 })
-.post(async(req, res) => {
+.post(authJwtController.isAuthenticated, async(req, res) => {
     var o = getJSONObjectForMovieRequirement(req);
     const movie = new Movie(req.body);
     if (movie.actors.length === 0) {
@@ -233,7 +233,7 @@ router.route('/movies')
 });
 
 router.route('/movies/:id')
-.get(async(req, res) => {
+.get(authJwtController.isAuthenticated, async(req, res) => {
     let id = req.params.id;
     let movies;
     let query = req.query;
@@ -277,7 +277,7 @@ router.route('/movies/:id')
     res.json(o);
     
 })
-.post((req, res) => {
+.post(authJwtController.isAuthenticated, (req, res) => {
     var o = getJSONObjectForMovieRequirement(req);
     let id = req.params.id;
     o.status = 200;
@@ -314,7 +314,7 @@ router.route('/movies/:id')
 
 
 router.route('/reviews')
-.get(async(req, res) => {
+.get(authJwtController.isAuthenticated, async(req, res) => {
     let reviews;
     if (req.body.title){
         reviews = await Review.find({'title' : { '$regex' : req.body.title, '$options' : 'i'}})
