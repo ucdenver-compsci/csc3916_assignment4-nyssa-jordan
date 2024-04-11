@@ -132,7 +132,7 @@ router.route('/movies')
                 }
             },
             {
-                $sort: { avgRating}
+                $sort: { average_rating }
               }
 
         ])
