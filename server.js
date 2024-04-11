@@ -130,9 +130,15 @@ router.route('/movies')
                 $addFields: {
                     average_rating: { $avg: '$reviews.rating'}
                 }
-            }
+            },
+            {
+                $sort: { avgRating: -1 }
+              }
 
         ])
+
+        
+          
         o.status = 200;
         o.message = "GET movies";
         o.movies = movies;
